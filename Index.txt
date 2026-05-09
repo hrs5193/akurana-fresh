@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Akurana Fresh</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#3a7d44;--green-light:#e8f5e9;--green-mid:#5a9e66;
+  --orange:#ff8c42;--orange-light:#fff3e8;
+  --bg:#f7faf7;--card:#ffffff;--text:#1e2d1f;--sub:#7a8f7c;
+  --border:#e6efe6;--radius:20px;--shadow:0 4px 24px rgba(58,125,68,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);max-width:420px;margin:0 auto;min-height:100vh;}
+/* SCREENS */
+.screen{display:none;flex-direction:column;min-height:100vh;padding-bottom:85px;}
+.screen.active{display:flex;}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--green) 0%,#2d6636 100%);padding:20px 20px 24px;border-radius:0 0 28px 28px;position:sticky;top:0;z-index:10;box-shadow:0 4px 20px rgba(58,125,68,0.18);}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.hdr-brand h1{color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.3px;}
+.hdr-brand p{color:rgba(255,255,255,0.75);font-size:11.5px;margin-top:2px;font-weight:400;}
+.cart-fab{background:rgba(255,255,255,0.18);backdrop-filter:blur(8px);border-radius:14px;padding:10px;position:relative;cursor:pointer;border:1px solid rgba(255,255,255,0.25);}
+.cart-fab svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;display:block;}
+.cart-dot{position:absolute;top:-5px;right:-5px;background:var(--orange);color:#fff;border-radius:50%;width:19px;height:19px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid #2d6636;}
+.search{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border-radius:16px;padding:11px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.2);}
+.search input{background:transparent;border:none;outline:none;color:#fff;font-size:13px;width:100%;font-family:'Poppins',sans-serif;}
+.search input::placeholder{color:rgba(255,255,255,0.6);}
+/* CONTENT */
+.content{flex:1;padding:18px 16px;}
+/* BANNER */
+.banner{background:linear-gradient(135deg,#ff8c42,#ffb347);border-radius:var(--radius);padding:18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 6px 20px rgba(255,140,66,0.25);}
+.banner-txt h3{color:#fff;font-size:15px;font-weight:700;}
+.banner-txt p{color:rgba(255,255,255,0.88);font-size:11.5px;margin-top:4px;font-weight:400;}
+.banner-badge{background:rgba(255,255,255,0.2);border-radius:12px;padding:8px 10px;font-size:32px;}
+/* CATEGORIES */
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:2px;}
+.cats::-webkit-scrollbar{display:none;}
+.cat{background:var(--card);border:1.5px solid var(--border);border-radius:50px;padding:7px 16px;font-size:12.5px;white-space:nowrap;cursor:pointer;color:var(--sub);font-weight:500;font-family:'Poppins',sans-serif;transition:all .2s;}
+.cat.active{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 4px 12px rgba(58,125,68,0.25);}
+/* SECTION TITLE */
+.sec-title{font-size:16px;font-weight:700;color:var(--text);margin:18px 0 12px;letter-spacing:-0.2px;}
+/* PRODUCT GRID */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.card{background:var(--card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);transition:transform .15s;}
+.card:active{transform:scale(0.97);}
+.card-img-wrap{position:relative;height:115px;overflow:hidden;}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.card:hover .card-img-wrap img{transform:scale(1.04);}
+.cat-tag{position:absolute;top:8px;left:8px;background:rgba(255,255,255,0.9);border-radius:8px;padding:2px 8px;font-size:10px;font-weight:600;color:var(--green);}
+.card-body{padding:10px 12px 12px;}
+.card-name{font-size:13.5px;font-weight:600;color:var(--text);}
+.card-unit{font-size:11px;color:var(--sub);margin-top:2px;font-weight:400;}
+.card-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.card-price{font-size:14px;font-weight:700;color:var(--green);}
+.card-price span{font-size:10px;font-weight:500;color:var(--sub);}
+.add-btn{background:var(--green);color:#fff;border:none;border-radius:12px;width:32px;height:32px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(58,125,68,0.3);transition:transform .1s;}
+.add-btn:active{transform:scale(0.9);}
+.qrow{display:flex;align-items:center;gap:6px;}
+.qbtn{background:var(--green-light);border:none;border-radius:9px;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700;}
+.qnum{font-size:13px;font-weight:700;min-width:20px;text-align:center;color:var(--text);}
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:var(--card);border-top:1px solid var(--border);display:flex;padding:8px 0 12px;z-index:20;box-shadow:0 -4px 20px rgba(0,0,0,0.06);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.bnav-item .nav-lbl{font-size:10px;color:var(--sub);font-family:'Poppins',sans-serif;font-weight:500;}
+.bnav-item svg{width:22px;height:22px;stroke:var(--sub);fill:none;stroke-width:1.8;transition:stroke .2s;}
+.bnav-item.active .nav-lbl{color:var(--green);font-weight:700;}
+.bnav-item.active svg{stroke:var(--green);}
+.bnav-rel{position:relative;}
+.bnav-badge{position:absolute;top:-4px;right:-7px;background:var(--orange);color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+/* CART */
+.page-hdr{background:linear-gradient(135deg,var(--green),#2d6636);padding:20px 20px 22px;border-radius:0 0 24px 24px;}
+.page-hdr h1{color:#fff;font-size:20px;font-weight:700;}
+.page-hdr p{color:rgba(255,255,255,0.7);font-size:12px;margin-top:3px;}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.ci-img{width:54px;height:54px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.ci-info{flex:1;}
+.ci-name{font-size:13.5px;font-weight:600;color:var(--text);}
+.ci-price{font-size:12px;color:var(--sub);margin-top:2px;}
+.empty{text-align:center;padding:70px 20px;color:var(--sub);}
+.empty .big{font-size:60px;margin-bottom:16px;}
+.empty h3{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.empty p{font-size:13px;}
+/* CHECKOUT */
+.checkout-box{padding:16px;background:var(--card);border-top:1px solid var(--border);position:sticky;bottom:85px;border-radius:24px 24px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,0.07);}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-bottom:7px;font-weight:500;}
+.sum-row.total{font-weight:700;font-size:15.5px;color:var(--text);padding-top:10px;border-top:1.5px dashed var(--border);margin-top:4px;}
+.wa-btn{width:100%;background:linear-gradient(135deg,#25d366,#1da851);color:#fff;border:none;border-radius:16px;padding:15px;font-size:14.5px;font-weight:700;cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Poppins',sans-serif;box-shadow:0 6px 20px rgba(37,211,102,0.3);}
+/* PROFILE */
+.profile-hero{background:linear-gradient(135deg,var(--green),#2d6636);padding:30px 20px 24px;border-radius:0 0 28px 28px;text-align:center;}
+.avatar{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 12px;border:3px solid rgba(255,255,255,0.4);}
+.pname{color:#fff;font-size:18px;font-weight:700;}
+.pphone{color:rgba(255,255,255,0.75);font-size:12.5px;margin-top:3px;}
+.form-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.form-card h3{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--text);}
+.fg{margin-bottom:12px;}
+.fg label{font-size:11.5px;color:var(--sub);display:block;margin-bottom:5px;font-weight:600;}
+.fg input,.fg textarea{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;font-size:13px;outline:none;background:var(--bg);font-family:'Poppins',sans-serif;color:var(--text);transition:border .2s;}
+.fg input:focus,.fg textarea:focus{border-color:var(--green);}
+.fg textarea{resize:none;height:72px;}
+.save-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 6px 16px rgba(58,125,68,0.25);}
+.menu-card{background:var(--card);border-radius:var(--radius);padding:4px 16px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:12px;}
+.menu-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.menu-row:last-child{border-bottom:none;}
+.micon-wrap{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.micon-wrap.green{background:var(--green-light);}
+.micon-wrap.orange{background:var(--orange-light);}
+.mlabel{flex:1;font-size:13.5px;font-weight:500;}
+.mchev{color:#ccc;font-size:18px;}
+/* ORDERS */
+.order-card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.oc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.oc-id{font-size:13px;font-weight:700;}
+.pill{font-size:11px;padding:4px 12px;border-radius:50px;font-weight:600;}
+.pill.d{background:var(--green-light);color:var(--green);}
+.pill.p{background:var(--orange-light);color:var(--orange);}
+.oc-items{font-size:12px;color:var(--sub);margin-bottom:6px;}
+.oc-total{font-size:13px;font-weight:700;color:var(--text);}
+/* ADMIN */
+.admin-login-card{background:var(--card);border-radius:var(--radius);padding:28px 24px;margin:30px 16px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.admin-login-card .lock{font-size:48px;text-align:center;margin-bottom:16px;}
+.admin-login-card h2{font-size:20px;font-weight:700;text-align:center;margin-bottom:6px;}
+.admin-login-card p{font-size:13px;color:var(--sub);text-align:center;margin-bottom:24px;}
+.admin-hdr{background:linear-gradient(135deg,#1b5e20,var(--green));padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:0 0 20px 20px;}
+.admin-hdr h2{color:#fff;font-size:17px;font-weight:700;}
+.admin-hdr button{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;}
+.admin-card{background:var(--card);border-radius:16px;padding:12px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);}
+.admin-img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;}
+.admin-info p{font-size:13px;font-weight:600;color:var(--text);}
+.admin-info span{font-size:11px;color:var(--sub);}
+.price-inp{border:1.5px solid var(--green);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700;color:var(--green);outline:none;width:80px;text-align:center;font-family:'Poppins',sans-serif;background:var(--green-light);}
+.tog{border:none;border-radius:8px;padding:6px 10px;font-size:11px;cursor:pointer;font-weight:600;font-family:'Poppins',sans-serif;transition:all .2s;}
+.tog.on{background:var(--green-light);color:var(--green);}
+.tog.off{background:#ffebee;color:#c62828;}
+.save-all{width:100%;background:linear-gradient(135deg,var(--green),#2d6636);color:#fff;border:none;border-radius:14px;padding:15px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 6px 16px rgba(58,125,68,0.25);margin-top:6px;}
+/* TOAST */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1e2d1f;color:#fff;padding:12px 24px;border-radius:50px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;font-weight:500;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.toast.show{opacity:1;}
+/* BADGE chip on home */
+.fresh-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.18);border-radius:50px;padding:3px 10px;font-size:10.5px;color:rgba(255,255,255,0.9);font-weight:500;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-brand">
+        <h1>🌿 Akurana Fresh</h1>
+        <p>Fresh from farm to your door</p>
+        <div class="fresh-chip">📍 Akurana &nbsp;·&nbsp; Free delivery over LKR 1,000</div>
+      </div>
+      <div class="cart-fab" onclick="goTo('cart')">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <div class="cart-dot" id="hdr-badge">0</div>
+      </div>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:rgba(255,255,255,0.65);fill:none;stroke-width:2.2;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search-input" placeholder="Search vegetables, fruits…" oninput="filterProducts()"/>
+    </div>
+  </div>
+  <div class="content">
+    <div class="banner">
+      <div class="banner-txt"><h3>🥭 Mango Season!</h3><p>Fresh Karthakolomban — check today's price</p></div>
+      <div class="banner-badge">🍍</div>
+    </div>
+    <div class="cats" id="cat-bar"></div>
+    <div class="sec-title" id="sec-label">All Products</div>
+    <div class="grid" id="product-grid"></div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="screen" id="s-cart">
+  <div class="page-hdr"><h1>🛒 My Cart</h1><p>Review your items before ordering</p></div>
+  <div class="content" id="cart-content"></div>
+  <div class="checkout-box" id="checkout-box" style="display:none;">
+    <div class="sum-row"><span>Subtotal</span><span id="subtotal">LKR 0</span></div>
+    <div class="sum-row"><span>Delivery fee</span><span id="delivery-fee">LKR 50</span></div>
+    <div class="sum-row total"><span>Total</span><span id="total">LKR 50</span></div>
+    <button class="wa-btn" onclick="orderViaWhatsApp()">
+      <svg style="width:22px;height:22px;fill:#fff;flex-shrink:0" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.932-1.408A9.952 9.952 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2zm.001 18a7.964 7.964 0 0 1-4.072-1.115l-.292-.173-3.028.864.888-2.948-.19-.303A7.944 7.944 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.588 8-7.999 8z"/></svg>
+      Order via WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div class="screen" id="s-orders">
+  <div class="page-hdr"><h1>📋 My Orders</h1><p>Track your deliveries</p></div>
+  <div class="content">
+    <div class="order-card">
+      <div class="oc-hdr"><span class="oc-id">Order #1042</span><span class="pill p">🚚 Out for delivery</span></div>
+      <div class="oc-items">Tomato 500g · Gotukola ×2 · Mango 1kg</div>
+      <div class="oc-total">LKR 620 &nbsp;·&nbsp; Today 2:30 PM</div>
+    </div>
+    <div class="order-card">
+      <div class="oc-hdr"><span class="oc-id">Order #1038</span><span class="pill d">✅ Delivered</span></div>
+      <div class="oc-items">Banana bunch · Bitter Gourd · Carrot 500g</div>
+      <div class="oc-total">LKR 410 &nbsp;·&nbsp; Yesterday</div>
+    </div>
+    <p style="text-align:center;font-size:12.5px;color:var(--sub);padding:20px 0;">More orders will appear here</p>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="screen" id="s-profile">
+  <div class="profile-hero">
+    <div class="avatar">🧕</div>
+    <div class="pname" id="disp-name">Welcome!</div>
+    <div class="pphone">Akurana Area</div>
+  </div>
+  <div class="content">
+    <div class="form-card">
+      <h3>👤 My Details</h3>
+      <div class="fg"><label>Full Name</label><input placeholder="Enter your name" id="prof-name"/></div>
+      <div class="fg"><label>Phone Number</label><input placeholder="+94 77 XXX XXXX" id="prof-phone" type="tel"/></div>
+      <div class="fg"><label>Delivery Address</label><textarea placeholder="House no, street, area in Akurana…" id="prof-address"></textarea></div>
+      <button class="save-btn" onclick="saveProfile()">Save Details</button>
+    </div>
+    <div class="menu-card">
+      <div class="menu-row" onclick="callWA()">
+        <div class="micon-wrap green">💬</div><span class="mlabel">Contact Us on WhatsApp</span><span class="mchev">›</span>
+      </div>
+      <div class="menu-row" onclick="goTo('admin')">
+        <div class="micon-wrap orange">🔐</div><span class="mlabel">Admin Panel</span><span class="mchev">›</span>
+      </div>
+      <div class="menu-row">
+        <div class="micon-wrap green">🌐</div><span class="mlabel">Language / භාෂාව / மொழி</span><span class="mchev">›</span>
+      </div>
+      <div class="menu-row">
+        <div class="micon-wrap green">🔔</div><span class="mlabel">Notifications</span><span class="mchev">›</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="s-admin">
+  <div id="admin-login-wrap">
+    <div class="page-hdr"><h1>🔐 Admin Login</h1><p>Manage your store</p></div>
+    <div class="content">
+      <div class="admin-login-card">
+        <div class="lock">🔒</div>
+        <h2>Admin Access</h2>
+        <p>Enter your password to manage prices & product availability</p>
+        <div class="fg"><label>Password</label><input type="password" id="admin-pass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')checkLogin()"/></div>
+        <button class="save-btn" onclick="checkLogin()">Login →</button>
+        <p style="font-size:11px;color:var(--sub);margin-top:14px;text-align:center;">Default: <b>akurana2024</b></p>
+      </div>
+    </div>
+  </div>
+  <div id="admin-panel-wrap" style="display:none;flex-direction:column;min-height:100vh;padding-bottom:20px;">
+    <div class="admin-hdr"><h2>🛠 Manage Products</h2><button onclick="adminLogout()">Logout</button></div>
+    <div style="padding:14px;">
+      <p style="font-size:12px;color:var(--sub);margin-bottom:12px;">Edit prices or hide out-of-stock items. Tap Save when done.</p>
+      <div id="admin-list"></div>
+      <button class="save-all" onclick="saveAll()">✅ Save All Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <div class="bnav-item active" id="nav-home" onclick="goTo('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nav-lbl">Home</span>
+  </div>
+  <div class="bnav-item" id="nav-cart" onclick="goTo('cart')">
+    <div class="bnav-rel">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <div class="bnav-badge" id="nav-badge">0</div>
+    </div>
+    <span class="nav-lbl">Cart</span>
+  </div>
+  <div class="bnav-item" id="nav-orders" onclick="goTo('orders')">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span class="nav-lbl">Orders</span>
+  </div>
+  <div class="bnav-item" id="nav-profile" onclick="goTo('profile')">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nav-lbl">Profile</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WA='94771671384', PASS='akurana2024';
+const IMGS={
+  'Tomato':'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=400&q=80',
+  'Gotukola':'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&q=80',
+  'Bitter Gourd':'https://images.unsplash.com/photo-1617692855027-33b14f061079?w=400&q=80',
+  'Carrot':'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&q=80',
+  'Brinjal':'https://images.unsplash.com/photo-1615484477778-ca3b77940c25?w=400&q=80',
+  'Green Chilli':'https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=400&q=80',
+  'Leeks':'https://images.unsplash.com/photo-1543168256-418811576931?w=400&q=80',
+  'Pumpkin':'https://images.unsplash.com/photo-1570586437263-ab629fccc818?w=400&q=80',
+  'Onion':'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&q=80',
+  'Garlic':'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400&q=80',
+  'Drumstick':'https://images.unsplash.com/photo-1624628639856-100bf817fd35?w=400&q=80',
+  'Snake Gourd':'https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=400&q=80',
+  'Mango':'https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&q=80',
+  'Banana':'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&q=80',
+  'Pineapple':'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=400&q=80',
+  'Papaya':'https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=400&q=80',
+  'Watermelon':'https://images.unsplash.com/photo-1563114773-84221bd62daa?w=400&q=80',
+  'Rambutan':'https://images.unsplash.com/photo-1630702819787-5c6a5e5f3285?w=400&q=80',
+  'Mangosteen':'https://images.unsplash.com/photo-1599598425947-5202edd56fda?w=400&q=80',
+  'Avocado':'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&q=80',
+  'King Coconut':'https://images.unsplash.com/photo-1581996323441-00e028e3b0a3?w=400&q=80',
+  'Guava':'https://images.unsplash.com/photo-1536511132770-e5058c7e8c46?w=400&q=80',
+  'Jackfruit':'https://images.unsplash.com/photo-1605027990121-cbae9e0642df?w=400&q=80',
+  'Lime':'https://images.unsplash.com/photo-1582087678095-e2e3e4e4e99b?w=400&q=80',
+  'Family Veggie Bundle':'https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=400&q=80',
+  'Fruit Basket':'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=400&q=80',
+  'Weekly Pack':'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80',
+};
+const FALLBACK='https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80';
+
+const DEF=[
+  {id:1,name:'Tomato',price:80,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:2,name:'Gotukola',price:40,unit:'per bunch',cat:'Vegetables',active:true},
+  {id:3,name:'Bitter Gourd',price:90,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:4,name:'Carrot',price:120,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:5,name:'Brinjal',price:70,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:6,name:'Green Chilli',price:60,unit:'per 100g',cat:'Vegetables',active:true},
+  {id:7,name:'Leeks',price:50,unit:'per bunch',cat:'Vegetables',active:true},
+  {id:8,name:'Pumpkin',price:60,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:9,name:'Onion',price:80,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:10,name:'Garlic',price:150,unit:'per 100g',cat:'Vegetables',active:true},
+  {id:11,name:'Drumstick',price:60,unit:'per bunch',cat:'Vegetables',active:true},
+  {id:12,name:'Snake Gourd',price:70,unit:'per 500g',cat:'Vegetables',active:true},
+  {id:13,name:'Mango',price:350,unit:'per kg',cat:'Fruits',active:true},
+  {id:14,name:'Banana',price:120,unit:'per bunch',cat:'Fruits',active:true},
+  {id:15,name:'Pineapple',price:220,unit:'per piece',cat:'Fruits',active:true},
+  {id:16,name:'Papaya',price:150,unit:'per piece',cat:'Fruits',active:true},
+  {id:17,name:'Watermelon',price:280,unit:'per piece',cat:'Fruits',active:true},
+  {id:18,name:'Rambutan',price:200,unit:'per 500g',cat:'Fruits',active:true},
+  {id:19,name:'Mangosteen',price:400,unit:'per 500g',cat:'Fruits',active:true},
+  {id:20,name:'Avocado',price:180,unit:'per piece',cat:'Fruits',active:true},
+  {id:21,name:'King Coconut',price:80,unit:'per piece',cat:'Fruits',active:true},
+  {id:22,name:'Guava',price:100,unit:'per 500g',cat:'Fruits',active:true},
+  {id:23,name:'Jackfruit',price:200,unit:'per kg',cat:'Fruits',active:true},
+  {id:24,name:'Lime',price:30,unit:'per piece',cat:'Fruits',active:true},
+  {id:25,name:'Family Veggie Bundle',price:650,unit:'6 items · serves 4',cat:'Bundles',active:true},
+  {id:26,name:'Fruit Basket',price:750,unit:'5 fruits · seasonal',cat:'Bundles',active:true},
+  {id:27,name:'Weekly Pack',price:1400,unit:'Veggies + Fruits · 7 days',cat:'Bundles',active:true},
+];
+
+let products=JSON.parse(localStorage.getItem('af_prods')||'null')||DEF;
+let cart={}, activeCat='All', searchQ='';
+const cats=['All','Vegetables','Fruits','Bundles'];
+
+function imgSrc(n){return IMGS[n]||FALLBACK;}
+
+function init(){
+  const bar=document.getElementById('cat-bar');
+  cats.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='cat'+(c===activeCat?' active':'');
+    d.textContent=c==='All'?'🛒 All':c==='Vegetables'?'🥦 Vegetables':c==='Fruits'?'🍍 Fruits':'🧺 Bundles';
+    d.onclick=()=>{activeCat=c;document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));d.classList.add('active');renderProducts();};
+    bar.appendChild(d);
+  });
+  renderProducts();
+}
+
+function filterProducts(){searchQ=document.getElementById('search-input').value.toLowerCase();renderProducts();}
+
+function renderProducts(){
+  const grid=document.getElementById('product-grid');
+  const label=document.getElementById('sec-label');
+  let list=products.filter(p=>(activeCat==='All'||p.cat===activeCat)&&(!searchQ||p.name.toLowerCase().includes(searchQ))&&p.active);
+  label.textContent=(activeCat==='All'?'All Products':activeCat)+' ('+list.length+')';
+  grid.innerHTML=list.map(p=>`
+    <div class="card">
+      <div class="card-img-wrap">
+        <img src="${imgSrc(p.name)}" alt="${p.name}" loading="lazy" onerror="this.src='${FALLBACK}'"/>
+        <span class="cat-tag">${p.cat==='Bundles'?'🧺 Bundle':p.cat==='Fruits'?'🍓 Fresh':'🥬 Fresh'}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-unit">${p.unit}</div>
+        <div class="card-row">
+          <div class="card-price">LKR ${p.price}<br/><span>${p.unit}</span></div>
+          ${cart[p.id]
+            ?`<div class="qrow"><button class="qbtn" onclick="chgQty(${p.id},-1)">−</button><span class="qnum">${cart[p.id]}</span><button class="qbtn" onclick="chgQty(${p.id},1)">+</button></div>`
+            :`<button class="add-btn" onclick="addItem(${p.id})">+</button>`}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addItem(id){cart[id]=(cart[id]||0)+1;updateBadge();renderProducts();showToast('Added to cart ✅');}
+function chgQty(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];updateBadge();renderProducts();if(document.getElementById('s-cart').classList.contains('active'))renderCart();}
+function updateBadge(){const n=Object.values(cart).reduce((a,b)=>a+b,0);['hdr-badge','nav-badge'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n;});}
+
+function renderCart(){
+  const el=document.getElementById('cart-content'),box=document.getElementById('checkout-box');
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  if(!keys.length){
+    el.innerHTML=`<div class="empty"><div class="big">🛒</div><h3>Your cart is empty</h3><p>Add fresh vegetables & fruits from Home</p></div>`;
+    box.style.display='none';return;
+  }
+  box.style.display='block';
+  let sub=0;
+  el.innerHTML=keys.map(k=>{
+    const p=products.find(x=>x.id==k);sub+=p.price*cart[k];
+    return `<div class="cart-item">
+      <img class="ci-img" src="${imgSrc(p.name)}" alt="${p.name}" onerror="this.src='${FALLBACK}'"/>
+      <div class="ci-info"><div class="ci-name">${p.name}</div><div class="ci-price">LKR ${p.price} × ${cart[k]} = <b>LKR ${p.price*cart[k]}</b></div></div>
+      <div class="qrow"><button class="qbtn" onclick="chgQty(${k},-1)">−</button><span class="qnum">${cart[k]}</span><button class="qbtn" onclick="chgQty(${k},1)">+</button></div>
+    </div>`;
+  }).join('');
+  const dlv=sub>=1000?0:50;
+  document.getElementById('subtotal').textContent='LKR '+sub;
+  document.getElementById('delivery-fee').textContent=dlv===0?'FREE 🎉':'LKR 50';
+  document.getElementById('total').textContent='LKR '+(sub+dlv);
+}
+
+function orderViaWhatsApp(){
+  const name=document.getElementById('prof-name').value||'';
+  const addr=document.getElementById('prof-address').value||'';
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  if(!keys.length){showToast('Your cart is empty!');return;}
+  let msg='🌿 *New Order – Akurana Fresh*\n\n',total=0;
+  keys.forEach(k=>{const p=products.find(x=>x.id==k);const ln=p.price*cart[k];total+=ln;msg+=`• ${p.name} ×${cart[k]} = LKR ${ln}\n`;});
+  const dlv=total>=1000?0:50;
+  msg+=`\n📦 Subtotal: LKR ${total}\n🚚 Delivery: ${dlv===0?'FREE':'LKR 50'}\n💵 *Total: LKR ${total+dlv}*`;
+  if(name) msg+=`\n\n👤 Name: ${name}`;
+  if(addr) msg+=`\n📍 Address: ${addr}`;
+  msg+='\n\n_Payment: Cash on Delivery_';
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+function callWA(){window.open('https://wa.me/'+WA,'_blank');}
+function saveProfile(){const n=document.getElementById('prof-name').value;if(n)document.getElementById('disp-name').textContent=n;showToast('✅ Details saved!');}
+
+function checkLogin(){
+  if(document.getElementById('admin-pass').value===PASS){
+    document.getElementById('admin-login-wrap').style.display='none';
+    const p=document.getElementById('admin-panel-wrap');p.style.display='flex';
+    renderAdmin();
+  } else {showToast('❌ Wrong password');document.getElementById('admin-pass').value='';}
+}
+function adminLogout(){
+  document.getElementById('admin-login-wrap').style.display='block';
+  document.getElementById('admin-panel-wrap').style.display='none';
+  document.getElementById('admin-pass').value='';
+  goTo('profile');
+}
+function renderAdmin(){
+  document.getElementById('admin-list').innerHTML=products.map(p=>`
+    <div class="admin-card">
+      <img class="admin-img" src="${imgSrc(p.name)}" alt="${p.name}" onerror="this.src='${FALLBACK}'"/>
+      <div class="admin-info" style="flex:1">
+        <p>${p.name}</p><span>${p.unit}</span>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+          <span style="font-size:11px;color:var(--sub);">LKR</span>
+          <input class="price-inp" id="pr-${p.id}" type="number" value="${p.price}" min="1"/>
+          <button class="tog ${p.active?'on':'off'}" id="tog-${p.id}" onclick="togProd(${p.id})">${p.active?'✅ Active':'❌ Hidden'}</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function togProd(id){
+  const p=products.find(x=>x.id===id);p.active=!p.active;
+  const b=document.getElementById('tog-'+id);
+  b.textContent=p.active?'✅ Active':'❌ Hidden';
+  b.className='tog '+(p.active?'on':'off');
+}
+function saveAll(){
+  products.forEach(p=>{const i=document.getElementById('pr-'+p.id);if(i){const v=parseInt(i.value);if(v>0)p.price=v;}});
+  localStorage.setItem('af_prods',JSON.stringify(products));
+  showToast('✅ All prices saved!');renderProducts();
+}
+
+function goTo(page){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+page).classList.add('active');
+  const n=document.getElementById('nav-'+page);if(n)n.classList.add('active');
+  if(page==='cart')renderCart();
+  window.scrollTo(0,0);
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+init();
+</script>
+</body>
+</html>
